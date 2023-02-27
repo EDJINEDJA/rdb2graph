@@ -4,6 +4,7 @@
 
 import typing
 import time , csv
+import pandas as pd 
 
 class Preprocessing():
 
@@ -23,9 +24,11 @@ class Preprocessing():
             if numberEvent == 0 :
 
                 eventTitle.extend(list(row))
-
                 numberEvent +=1
             else:
 
                 event.append(row)
+        log = pd.DataFrame(event,columns= eventTitle)
+    
+        return  eventTitle , log
 
