@@ -8,14 +8,18 @@ import time , csv
 import pandas as pd 
 import os
 
-class Preprocessing():
+class Preprocessor():
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self , inputPath : str , outputPath : str, fileName :str, outputFileName : str,timestamp_format : str = '%Y.%m.%d %H:%M:%S') -> None:
+        self.inputPath = inputPath
+        self.outputPath = outputPath
+        self.fileName  = fileName 
+        self.outputFileName = outputFileName
+        self.timestamp_format = timestamp_format
 
-    def DatasetPreparation(self, inputPath : str , outputPath : str, fileName :str, outputFileName : str):
+    def Preprocess(self) -> None:
 
-        csvLog = pd.read_csv(filepath_or_buffer= os.path.realpath(inputPath + fileName), keep_default_na=True) #Load log from csv
+        csvLog = pd.read_csv(filepath_or_buffer= os.path.realpath(self.inputPath + self.fileName), keep_default_na=True) #Load log from csv
         header = csvLog.columns
         csvLog.drop_duplicates(keep='first', inplace=True) #remove duplicates from the dataset
         csvLog = csvLog.reset_index(drop=True) #renew the index to close gaps of removed duplicates 
@@ -33,16 +37,21 @@ class Preprocessing():
             response = input(f"{firstWord} \n Choose the appropriate number \n 1 - Activity \n 2 - Timestamp , \n 3 - Actor \n 0 - default \n")
 
             if response == "1":
-                columnNewcolumn[item] = "Activity"
+                columnNewcolumn[item] = "Case"
             elif response == "2":
-                columnNewcolumn[item] = "Timestamp"
+                columnNewcolumn[item] = "Activity"
             elif response == "3":
+                columnNewcolumn[item] = "Timestamp"
+            elif response == "4":
                 columnNewcolumn[item] = "Actor"
             else :
                 list_word = item.split(' ')
                 singleWord = "_".join(list_word)
                 columnNewcolumn[item] = singleWord.capitalize()
             print(len(firstWord)*'-')
+
+        if "Case" not in list(columnNewcolumn.values()) or "Activity" not in list(columnNewcolumn.values()) or "Timestamp" not in list(columnNewcolumn.values()):
+            print("Choose right datafram, This type of table don't follow MPMM rule")
      
         #Rename columns with white spaces and columns that refer to time, actors and activities.
         csvLog = csvLog.rename(columns=columnNewcolumn)
@@ -57,7 +66,7 @@ class Preprocessing():
         header =  list(csvLog) #save the updated header data
         
         logSamples = pd.DataFrame(sampleList,columns=header) #create pandas dataframe and add the samples  
-        logSamples['Timestamp'] = pd.to_datetime(logSamples['Timestamp'], format='%Y.%m.%d %H:%M:%S')
+        logSamples['Timestamp'] = pd.to_datetime(logSamples['Timestamp'], format=self.timestamp_format)
         
         logSamples.fillna(0)
         # sort all events by time, add a second column if data contains events with identical timestamps to ensure canonical ordering
@@ -65,9 +74,9 @@ class Preprocessing():
         logSamples.sort_values(['Timestamp'], inplace=True)
 
         # and write dataframe to CSV file sorted by time
-        if not os.path.isdir(outputPath):
-            os.mkdir(outputPath)
-        logSamples.to_csv(outputPath+outputFileName, index=False)
+        if not os.path.isdir(self.outputPath):
+            os.mkdir(self.outputPath)
+        logSamples.to_csv(self.outputPath+self.outputFileName, index=False)
        
 
     def Load(self, filePath : str):
