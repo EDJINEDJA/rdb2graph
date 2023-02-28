@@ -1,2 +1,2 @@
-./inputs/data
-./inputs/newData
+./data/raw
+./data/processed

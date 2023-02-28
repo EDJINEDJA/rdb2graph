@@ -34,7 +34,7 @@ class Preprocessor():
         for item in header :
             firstWord = " Choose the appropriate column name using the  Multidimentional process mining methode"
             print(f" Column : {item}")
-            response = input(f"{firstWord} \n Choose the appropriate number \n 1 - Activity \n 2 - Timestamp , \n 3 - Actor \n 0 - default \n")
+            response = input(f"{firstWord} \n Choose the appropriate number \n 1 - Case \n 2 - Activity \n 3 - Timestamp , \n 4 - Actor \n 0 - default \n")
 
             if response == "1":
                 columnNewcolumn[item] = "Case"
@@ -50,8 +50,12 @@ class Preprocessor():
                 columnNewcolumn[item] = singleWord.capitalize()
             print(len(firstWord)*'-')
 
-        if "Case" not in list(columnNewcolumn.values()) or "Activity" not in list(columnNewcolumn.values()) or "Timestamp" not in list(columnNewcolumn.values()):
+        if "Case" not in list(columnNewcolumn.values()) or "Timestamp" not in list(columnNewcolumn.values()):
+            
             print("Choose right datafram, This type of table don't follow MPMM rule")
+         
+            
+            
      
         #Rename columns with white spaces and columns that refer to time, actors and activities.
         csvLog = csvLog.rename(columns=columnNewcolumn)
