@@ -1,10 +1,9 @@
 initialize_git:
-	@echo "Github initialization"
+	@echo "Initializing git..."
 	git init 
-
-install:
-    @echo "Github initialization"
+	
+install: 
+	@echo "Installing..."
 	pip install -r requirements.txt
 
-setup: initialize_git install
-
+setup: initialize_git install 
